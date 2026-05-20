@@ -91,6 +91,7 @@
                       AutoGenerateColumns="False">
 
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header=" Nº Reserva" Binding="{Binding ReservationNumber}" Width="*" />
                     <DataGridTextColumn Header="Usuario(DNI)" Binding="{Binding UserDNI}" Width="*" />
                     <DataGridTextColumn Header="Usuario(Nombre)" Binding="{Binding UserNombre}" Width="*" />
                     <DataGridTextColumn Header="Habitaciones" Binding="{Binding RoomNumbers}" Width="*" />
@@ -98,8 +99,23 @@
                     <DataGridTextColumn Header="Entrada" Binding="{Binding CheckIn, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Salida" Binding="{Binding CheckOut, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Estado" Binding="{Binding Status}" Width="*" />
-                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice}" Width="*"/>
-
+                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice, StringFormat={}{0:F2} €}" Width="*"/>
+                    <DataGridTemplateColumn Header="Historial" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                                        BorderThickness="0"
+                                         Click="History_Click"
+                                        CommandParameter="{Binding}">
+                                    <Path Fill="{StaticResource UpdateBrush}"
+                                        Width="30"
+                                        Height="30"
+                                        Stretch="Uniform"
+                                        Data="{StaticResource IcoHistory}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
 
             </DataGrid>

@@ -38,6 +38,7 @@
               SelectedItem="{Binding SelectedReservation, Mode=TwoWay}">
 
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header=" Nº Reserva" Binding="{Binding ReservationNumber}" Width="*" />
                     <DataGridTextColumn Header="Usuario(DNI)" Binding="{Binding UserDNI}" Width="*" />
                     <DataGridTextColumn Header="Usuario(Nombre)" Binding="{Binding UserNombre}" Width="*" />
                     <DataGridTextColumn Header="Habitaciones" Binding="{Binding RoomNumbers}" Width="*" />

@@ -9,6 +9,9 @@ namespace DesktopApp.Models
 {
     public class Reservations
     {
+        [JsonPropertyName("reservationNumber")]
+        public string ReservationNumber { get; set; }
+
         [JsonPropertyName("_id")]
         public string Id { get; set; }
 

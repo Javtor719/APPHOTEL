@@ -1,0 +1,197 @@
+﻿<Window x:Class="DesktopApp.Views.Reservation.InvoiceHeaderConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp.Views.Reservation"
+        mc:Ignorable="d"
+        Background="{StaticResource BackgroundBrush2}"
+        Title="Modificación de factura" Height="680" Width="1200" MinWidth="820" MinHeight="680"
+        Icon="/Resources/images/icoproyecto.ico">
+    <Grid Margin="26">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <Button Grid.Column="1"
+                Style="{StaticResource ActionButton}"
+                Command="{Binding SaveCommand}"
+                Margin="10" Cursor="Hand" Content="Guardar"                    
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            </Button>
+
+            <Button Grid.Column="2"
+                Style="{StaticResource ActionButton}"
+                    Background="#6B7280"
+                Command="{Binding LimpiarCommand }"
+                Margin="10"
+                Content="Limpiar">
+            </Button>
+            <Button Grid.Column="3"
+                Style="{StaticResource ActionButton}"
+                Background="#EF4444"
+                Margin="10"
+                Command="{Binding CancelCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Content="Cancelar">
+            </Button>
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="5" Text="{Binding CanSaveMessage}" TextAlignment="Right"
+            Foreground="Red"
+            Margin="0,6,0,0" />
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Datos del Hotel" Style="{StaticResource Titulo1}" FontSize="16" FontWeight="Bold" Margin="0,0,0,16"/>
+
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel >
+                                    <TextBlock Style="{StaticResource Titulo2}" >
+                                    <Run Text="Dirección" />
+                                    <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="hotelAddress" Style="{StaticResource InputTextBox}"
+                                         Text="{Binding DirrecionHotel, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='', 
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                    <Run Text="CIF " />
+                                    <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="CIFText" Style="{StaticResource InputTextBox}"
+                                         Text="{Binding CIFHotel, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='', 
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                     <Run Text="Teléfono " />
+                                     <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="phonetext" Style="{StaticResource InputTextBox}"
+                                         Text="{Binding PhoneHotel, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='', 
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                    <Run Text="Email " />
+                                    <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="emailText" Style="{StaticResource InputTextBox}"
+                                         Text="{Binding EmailHotel, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='', 
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Datos del Cliente" Style="{StaticResource Titulo1}" FontSize="16" FontWeight="Bold" Margin="0,0,0,16"/>
+
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Margin="0 10 0 0"> 
+                                    <TextBlock Style="{StaticResource Titulo2}" >
+                                        <Run Text="Nombre" />
+                                        <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="nameClienteText" Style="{StaticResource InputTextBox}"
+                                        Text="{Binding NameCliente, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='',
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1"  Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                        <Run Text="Dirección" />
+                                        <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="direcciónClienteText" Style="{StaticResource InputTextBox}"
+                                        Text="{Binding DirrecionCliente, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='',
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2"  Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                        <Run Text="Ciudad" />
+                                        <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="ciudadClienteText" Style="{StaticResource InputTextBox}"
+                                        Text="{Binding CiudadCliente, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='',
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}" Margin="0 10 0 0">
+                                        <Run Text="DNI/CIF " />
+                                        <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="DNIClienteText" Style="{StaticResource InputTextBox}"
+                                        Text="{Binding DNICliente, UpdateSourceTrigger=PropertyChanged,TargetNullValue='',FallbackValue='',
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4" Margin="0 10 0 0">
+                                    <TextBlock  Style="{StaticResource Titulo2}">
+                                        <Run Text="Email" />
+                                        <Run Text="*" Foreground="Red" />
+                                    </TextBlock>
+                                    <TextBox x:Name="emailClienteText" Style="{StaticResource InputTextBox}"
+                                        Text="{Binding EmailCliente, UpdateSourceTrigger=PropertyChanged, TargetNullValue='',FallbackValue='',
+                                        ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

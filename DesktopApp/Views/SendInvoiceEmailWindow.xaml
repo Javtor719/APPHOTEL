@@ -1,0 +1,48 @@
+﻿<Window x:Class="DesktopApp.Views.SendInvoiceEmailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp.Views"
+        mc:Ignorable="d"
+        Title="Enviar factura"
+        Height="280"
+        Width="480"
+        WindowStartupLocation="CenterOwner"
+        Icon="/Resources/images/icoproyecto.ico">
+    <Grid>
+        <Border Style="{StaticResource CardStyle}" Background="{StaticResource BackgroundBrush2}" Margin="0">
+            <StackPanel>
+                <TextBlock Text="Email destino"
+               FontWeight="Bold" Style="{StaticResource itemhijo2}"/>
+
+                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding EmailDestino, UpdateSourceTrigger=PropertyChanged}"
+                    Height="35"
+                    Padding="10 0 0 0"
+                    FontSize="15" />
+
+                <TextBlock Text="{Binding ErrorMessage}"
+               Foreground="Red"
+               Margin="0,8,0,0"/>
+
+                <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,20,0,0">
+
+                    <Button Content="Enviar"
+                Style="{StaticResource ActionButton}"
+                Background="{StaticResource OkBrush}"
+                Command="{Binding SendCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+                    <Button Content="Cancelar"
+                Margin="10,0,0,0"
+                Style="{StaticResource ActionButton}"
+                Background="{StaticResource CancelBrush}"
+                Command="{Binding CancelCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

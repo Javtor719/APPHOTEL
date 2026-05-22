@@ -8,7 +8,7 @@
     <Color x:Key="AccentColor">#ED8C72</Color>
     <Color x:Key="OkColor">#3FAE8F</Color>
     <Color x:Key="CancelColor">#D64545</Color>
-    <Color x:Key="UpdateColor">#E8A04C</Color>
+    <Color x:Key="UpdateColor">#494C6E</Color>
     <Color x:Key="ReturnColor">#8FAADC</Color>
     
 </ResourceDictionary>

@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:DesktopApp.Views"
         mc:Ignorable="d"
         Title="FormRoomsView" Height="720" Width="1200" MinWidth="820" MinHeight="720"
+        Background="{StaticResource BackgroundBrush2}"
+        WindowStartupLocation="CenterScreen"
         Icon="/Resources/images/icoproyecto.ico">
     <Grid Margin="26">
         <Grid.RowDefinitions>

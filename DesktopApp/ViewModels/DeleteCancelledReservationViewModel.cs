@@ -65,7 +65,7 @@ namespace DesktopApp.ViewModels
                 foreach (var reservation in reservations)
                 {
 
-                    if (reservation.Status?.ToLower() != "confirmada")
+                    if (reservation.Status?.Trim().ToLower() == "cancelada")
                     {
                         canceladas.Add(reservation);
                     }

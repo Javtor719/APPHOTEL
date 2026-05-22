@@ -37,5 +37,18 @@ namespace DesktopApp.Views.Reservation
             var ok = form.ShowDialog();
             await _vm.CargarReservasAsync();
         }
+
+        private void History_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is not Reservations reservation)
+            {
+                MessageBox.Show("Selecciona una reserva.");
+                return;
+            }
+
+            var win = new ReservationsHistory(reservation.ReservationNumber, reservation.Id);
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
     }
 }

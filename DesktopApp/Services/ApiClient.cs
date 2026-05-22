@@ -252,12 +252,29 @@ namespace DesktopApp.Services
             return reviews;
         }
 
+        public async Task<List<BookingAuditLog>> GetHistoryReservation(string id)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"bookingAuditLog/{id}/audit");
+            var response = await _httpClient.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<List<BookingAuditLog>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new JsonStringEnumConverter() }
+            }) ?? new List<BookingAuditLog>();
+        }
+
         public async Task<string> PostReservationAsync(Reservations reserva)
         {
             var json = JsonSerializer.Serialize(reserva);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var request = CreateRequest(HttpMethod.Post, "reservations/add");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("reservations/add", content);
+            var response = await _httpClient.SendAsync(request);
 
             var respuestaJson = await response.Content.ReadAsStringAsync();
 
@@ -305,26 +322,25 @@ namespace DesktopApp.Services
             if (string.IsNullOrEmpty(searchData) || string.IsNullOrEmpty(searchProperty))
                 return null;
 
-            try
+            var payload = new { searchData, searchProperty };
+            var json = JsonSerializer.Serialize(payload);
+
+            var request = CreateRequest(HttpMethod.Post, "users/getOne");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-                var payload = new {searchData,searchProperty};
-                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-
-
-                var response = await _httpClient.PostAsync("users/getOneUserByIdOrDni", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var user = await response.Content.ReadFromJsonAsync<User>();
-                    return user;
-                }
-
+                MessageBox.Show($"Error API: {response.StatusCode}\n{body}");
                 return null;
             }
-            catch
+
+            return JsonSerializer.Deserialize<User>(body, new JsonSerializerOptions
             {
-                return null;
-            }
+                PropertyNameCaseInsensitive = true
+            });
         }
         public async Task<bool> DeleteReservationAsync(string reservationId)
         {
@@ -349,9 +365,6 @@ namespace DesktopApp.Services
         {
             _token = null;
         }
-
-
-
     }
 
 }

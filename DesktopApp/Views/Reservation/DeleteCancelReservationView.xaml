@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             Background="{StaticResource BackgroundBrush2}"
              d:DesignHeight="400" d:DesignWidth="600"
         Icon="/Resources/images/icoproyecto.ico">
     <Grid>
@@ -19,7 +20,7 @@
                     <Button Content="Eliminar Reserva" Margin="10,0,0,10" 
                             Command="{Binding DeleteReservationCommand}" 
                             Style="{StaticResource ActionButton}" 
-                            Background="#111827" 
+                            Background="{StaticResource CancelBrush }" 
                             Foreground="White"/>
                 </StackPanel>
 
@@ -30,22 +31,42 @@
             </Grid>
 
             <DataGrid x:Name="dgReservation"
-              AutoGenerateColumns="False"
-              IsReadOnly="True"
-              Margin="10" 
-              Style="{StaticResource ModernDataGrid}"
-              ItemsSource="{Binding Reservas}"
-              SelectedItem="{Binding SelectedReservation, Mode=TwoWay}">
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    Margin="10" 
+                    Style="{StaticResource ModernDataGrid}"                      
+                    ColumnHeaderStyle="{StaticResource CenterHeaderStyle}"
+                    ItemsSource="{Binding Reservas}"
+                    SelectedItem="{Binding SelectedReservation, Mode=TwoWay}"                      
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header=" Nº Reserva" Binding="{Binding ReservationNumber}" Width="*" />
                     <DataGridTextColumn Header="Usuario(DNI)" Binding="{Binding UserDNI}" Width="*" />
                     <DataGridTextColumn Header="Usuario(Nombre)" Binding="{Binding UserNombre}" Width="*" />
                     <DataGridTextColumn Header="Habitaciones" Binding="{Binding RoomNumbers}" Width="*" />
+                    <DataGridTextColumn Header="Personas" Binding="{Binding NumGuests}" Width="*" />
                     <DataGridTextColumn Header="Entrada" Binding="{Binding CheckIn, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Salida" Binding="{Binding CheckOut, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Estado" Binding="{Binding Status}" Width="*" />
-                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice}" Width="*" />
+                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice,StringFormat={}{0:F2} €}" Width="*" />
+                    <DataGridTemplateColumn Header="Historial" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                                        BorderThickness="0"
+                                         Click="History_Click"
+                                        CommandParameter="{Binding}">
+                                    <Path Fill="{StaticResource UpdateBrush}"
+                                        Width="30"
+                                        Height="30"
+                                        Stretch="Uniform"
+                                        Data="{StaticResource IcoHistory}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

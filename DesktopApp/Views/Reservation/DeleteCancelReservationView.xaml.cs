@@ -1,4 +1,5 @@
-﻿using DesktopApp.ViewModels;
+﻿using DesktopApp.Models;
+using DesktopApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,18 @@ namespace DesktopApp.Views.Reservation
             InitializeComponent();
             DataContext = new DeleteCancelledReservationsViewModel();
 
+        }
+        private void History_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is not Reservations reservation)
+            {
+                MessageBox.Show("Selecciona una reserva.");
+                return;
+            }
+
+            var win = new ReservationsHistory(reservation.ReservationNumber, reservation.Id);
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
         }
     }
 }

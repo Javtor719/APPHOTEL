@@ -50,5 +50,20 @@ namespace DesktopApp.Views.Reservation
             win.Owner = Application.Current.MainWindow;
             win.ShowDialog();
         }
+        private async void PDF_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is not Reservations reservation)
+            {
+                MessageBox.Show("Selecciona una reserva.");
+                return;
+            }
+
+            var win = new ReservationInvoicePDF(reservation, _vm);
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+
+            await _vm.CargarReservasAsync();
+        }
+        
     }
 }

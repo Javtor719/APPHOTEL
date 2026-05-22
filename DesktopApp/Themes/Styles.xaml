@@ -40,7 +40,7 @@
     </Style>
     <!-- Estilo iconos dentro del sidebar  -->
     <Style x:Key="SidebarItemStyle" TargetType="Button">
-        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="Margin" Value="0,10,0,0"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -401,6 +401,10 @@
             </Trigger>
 
         </Style.Triggers>
+    </Style>
+    <Style x:Key="CenterHeaderStyle" TargetType="DataGridColumnHeader">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
 </ResourceDictionary>

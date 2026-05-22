@@ -361,6 +361,90 @@ namespace DesktopApp.Services
                 throw;
             }
         }
+
+        public async Task<byte[]> GetInvoicePdfAsync(string reservationId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"reservations/{reservationId}/invoice");
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error API: {(int)response.StatusCode} {response.ReasonPhrase}\n{error}");
+            }
+
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+
+            if (contentType != "application/pdf")
+            {
+                var text = await response.Content.ReadAsStringAsync();
+                throw new Exception($"La API no devolvió un PDF. Content-Type: {contentType}\n{text}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task<InvoiceData> GetInvoiceDataAsync(string reservationId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"reservations/{reservationId}/invoice-data");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Error API: {(int)response.StatusCode}\n{json}");
+
+            return JsonSerializer.Deserialize<InvoiceData>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
+        public async Task<byte[]> PostInvoicePdfAsync(string reservationId, InvoiceData invoiceData)
+        {
+            var json = JsonSerializer.Serialize(invoiceData, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var request = CreateRequest(HttpMethod.Post, $"reservations/{reservationId}/invoice");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error API: {(int)response.StatusCode}\n{error}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task SendInvoiceEmailAsync(string reservationId, string email, InvoiceData invoiceData = null)
+        {
+            var payload = new
+            {
+                email,
+                hotel = invoiceData?.Hotel,
+                client = invoiceData?.Client
+            };
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var request = CreateRequest(HttpMethod.Post, $"reservations/{reservationId}/invoice-email");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
         public void Logout()
         {
             _token = null;

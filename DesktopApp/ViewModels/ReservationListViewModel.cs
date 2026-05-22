@@ -291,7 +291,7 @@ namespace DesktopApp.ViewModels
             if (OcultarTerminadas)
             {
                 filtradas = filtradas.Where(r =>
-                    !string.Equals(r.Status, "terminada", StringComparison.OrdinalIgnoreCase)
+                    !string.Equals(r.Status, "checkOut", StringComparison.OrdinalIgnoreCase)
                 );
             }
 
@@ -374,6 +374,17 @@ namespace DesktopApp.ViewModels
             }
         }
 
+        public bool CanShowInvoice(Reservations reservation)
+        {
+            if (reservation == null)
+                return false;
+
+            var estado = reservation.Status?.Trim().ToLower();
+
+            return estado == "checkin" ||
+                   estado == "checkout" ||
+                   estado == "facturada";
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)

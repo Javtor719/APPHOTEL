@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DesktopApp.Models
 {
@@ -39,6 +40,9 @@ namespace DesktopApp.Models
         [JsonPropertyName("numGuests")] 
         public int NumGuests { get; set; }
 
+        [JsonPropertyName("invoiceNumber")]
+        public string InvoiceNumber { get; set; }
+
         [JsonIgnore]
         public string UserDNI { get; set; }
 
@@ -55,5 +59,12 @@ namespace DesktopApp.Models
             }
         }
 
+        public bool CanInvoice =>
+            Status == "checkIn" ||
+            Status == "checkOut" ||
+            Status == "facturada";
+
+        public double InvoiceOpacity =>
+            CanInvoice ? 1.0 : 0.3;
     }
 }

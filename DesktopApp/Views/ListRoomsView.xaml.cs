@@ -82,5 +82,26 @@ namespace DesktopApp.Views
             win.Owner = Application.Current.MainWindow;
             win.ShowDialog();
         }
+
+        private async void Calendar_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is not Rooms room)
+            {
+                MessageBox.Show("Selecciona una habitación.");
+                return;
+            }
+
+            if (DataContext is not ListRoomsViewModel vm)
+            {
+                MessageBox.Show("No se pudo acceder al listado de habitaciones.");
+                return;
+            }
+
+            var win = new DesktopApp.Views.RoomCalendarView(room, vm.Rooms);
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+
+            await _vm.LoadRoomsAsync();
+        }
     }
 }

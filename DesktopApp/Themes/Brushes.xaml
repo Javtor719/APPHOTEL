@@ -10,4 +10,5 @@
     <SolidColorBrush x:Key="CancelBrush" Color="{StaticResource CancelColor}"/>
     <SolidColorBrush x:Key="UpdateBrush" Color="{StaticResource UpdateColor}"/>
     <SolidColorBrush x:Key="ReturnBrush" Color="{StaticResource ReturnColor}"/>
+    <SolidColorBrush x:Key="CalendarBrush" Color="{StaticResource CalendarColor}"/>
 </ResourceDictionary>

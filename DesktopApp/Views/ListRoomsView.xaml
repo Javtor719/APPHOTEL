@@ -101,19 +101,19 @@
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding availability}" Value="available">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="available">
                                                             <Setter Property="Background" Value="Green"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding availability}" Value="unavailable">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="unavailable">
                                                             <Setter Property="Background" Value="Red"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding availability}" Value="block">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="block">
                                                             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock Text="{Binding availability}"
+                                                <TextBlock Text="{Binding EffectiveAvailability}"
                                                 Foreground="White"
                                                 FontWeight="SemiBold"/>
                                         </Border>
@@ -193,6 +193,16 @@
                                                     <Path Fill="{StaticResource SecondaryBrush}"
                                                           Width="30" Height="30" Stretch="Uniform"
                                                           Data="{StaticResource IcoQr}"/>
+                                                </Button>
+                                                <Separator Width="10" Background="Transparent"></Separator>
+                                                <Button Style="{StaticResource IconButtonStyle}"
+                                                    Click="Calendar_Click"
+                                                    CommandParameter="{Binding}">
+                                                    <Path Fill="{StaticResource PrimaryBrush}"
+                                                          Width="30"
+                                                          Height="30"
+                                                          Stretch="Uniform"
+                                                          Data="{StaticResource IcoReservations}"/> 
                                                 </Button>
                                             </StackPanel>
                                         </StackPanel>

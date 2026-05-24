@@ -501,6 +501,54 @@ namespace DesktopApp.Services
             }) ?? new List<RoomQrScanLog>();
         }
 
+        public async Task<RoomCalendarResponse> GetRoomCalendarAsync(string roomId, string month)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/calendar?month={month}");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<RoomCalendarResponse>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
+        public async Task CreateRoomBlockAsync(string roomId, DateTime startDate, DateTime endDate, string reason)
+        {
+            var payload = new
+            {
+                startDate = startDate.ToString("yyyy-MM-dd"),
+                endDate = endDate.ToString("yyyy-MM-dd"),
+                reason
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+
+            var request = CreateRequest(HttpMethod.Post, $"rooms/{roomId}/blocks");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
+        public async Task DeleteRoomBlockAsync(string roomId, string blockId)
+        {
+            var request = CreateRequest(HttpMethod.Delete, $"rooms/{roomId}/blocks/{blockId}");
+            var response = await _httpClient.SendAsync(request);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
         public void Logout()
         {
             _token = null;

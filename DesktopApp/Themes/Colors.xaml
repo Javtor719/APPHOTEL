@@ -10,5 +10,6 @@
     <Color x:Key="CancelColor">#D64545</Color>
     <Color x:Key="UpdateColor">#494C6E</Color>
     <Color x:Key="ReturnColor">#8FAADC</Color>
+    <Color x:Key="CalendarColor">#E0E0E0</Color>
     
 </ResourceDictionary>

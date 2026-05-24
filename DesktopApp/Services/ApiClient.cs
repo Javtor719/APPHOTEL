@@ -445,6 +445,62 @@ namespace DesktopApp.Services
                 throw new Exception(body);
         }
 
+        public async Task<DashboardStats> GetDashboardStatsAsync()
+        {
+            var request = CreateRequest(HttpMethod.Get, "reservations/dashboardStats");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<DashboardStats>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        public async Task<byte[]> GetRoomQrAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/qr");
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task RegenerateRoomQrAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Post, $"rooms/{roomId}/qr/regenerate");
+            var response = await _httpClient.SendAsync(request);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
+        public async Task<List<RoomQrScanLog>> GetRoomQrLogsAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/qr/logs");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<List<RoomQrScanLog>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new List<RoomQrScanLog>();
+        }
+
         public void Logout()
         {
             _token = null;

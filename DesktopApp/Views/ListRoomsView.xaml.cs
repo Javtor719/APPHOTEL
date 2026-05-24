@@ -1,7 +1,4 @@
-﻿using DesktopApp.Models;
-using DesktopApp.ViewModels;
-using DesktopApp.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +14,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DesktopApp.Models;
+using DesktopApp.ViewModels;
+using DesktopApp.Views;
+using DesktopApp.Views.Reservation;
 
 namespace DesktopApp.Views
 {
@@ -65,6 +66,19 @@ namespace DesktopApp.Views
             }
 
             var win = new RoomReviewsWindow(room.Id, room.numRoom);
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private async void QR_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is not Rooms rooms)
+            {
+                MessageBox.Show("Selecciona una habitación.");
+                return;
+            }
+
+            var win = new DesktopApp.Views.QRRoomView(rooms);
             win.Owner = Application.Current.MainWindow;
             win.ShowDialog();
         }

@@ -6,23 +6,53 @@
              xmlns:local="clr-namespace:DesktopApp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="{StaticResource BackgroundBrush2}">
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Sistema de Gestión Hotelera"
+               Foreground="{StaticResource SecondaryBrush}"
+               FontSize="28"
+               FontWeight="SemiBold"
+               TextAlignment="Center"
+               HorizontalAlignment="Center"
+                   Margin="0 20 0 0"/>
 
-            <!-- Imagen -->
-            <Image Source="/Resources/images/icono_proyecto.png"
-                   Width="200"
-                   Height="200"
-                   Stretch="Uniform"
-                   Opacity="0.95"/>
+        <UniformGrid Columns="2" Rows="2" Grid.Row="1" Margin="30">
 
-            <TextBlock Text="Sistema de Gestión Hotelera"
-                       Foreground="White"
-                       FontSize="28"
-                       FontWeight="SemiBold"
-                       HorizontalAlignment="Center"/>
+            <Border Style="{StaticResource CardBorder}" Height="190" Margin="0,0,20,20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding TotalRooms}" FontSize="54" FontWeight="SemiBold"
+                               Foreground="#E8753D" TextAlignment="Center"/>
+                    <TextBlock Text="Total de habitaciones" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
 
-        </StackPanel>
+            <Border Style="{StaticResource CardBorder}" Height="190" Margin="20,0,0,20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding TodayCheckIns}" FontSize="54" FontWeight="SemiBold"
+                               Foreground="#E5A800" TextAlignment="Center"/>
+                    <TextBlock Text="Check-ins de hoy" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Height="190" Margin="0,20,20,0">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding TodayCheckOuts}" FontSize="54" FontWeight="SemiBold"
+                               Foreground="#3B82F6" TextAlignment="Center"/>
+                    <TextBlock Text="Check-outs de hoy" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Height="190" Margin="20,20,0,0">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ActiveReservations}" FontSize="54" FontWeight="SemiBold"
+                               Foreground="#10B981" TextAlignment="Center"/>
+                    <TextBlock Text="Reservas activas" FontSize="16" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
     </Grid>
 </UserControl>

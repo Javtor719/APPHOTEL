@@ -1,0 +1,164 @@
+﻿<Window x:Class="DesktopApp.Views.QRRoomView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp.Views"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Title="QRRoomView"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush2}"
+        Icon="/Resources/images/icoproyecto.ico"
+        Height="720" Width="1000">
+    <Grid Margin="26">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource CardBorder}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{Binding Title}"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Foreground="#111827"/>   
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Generar QR"
+                            Style="{StaticResource ActionButton}"
+                            Command="{Binding GenerateQrCommand}"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="Descargar"
+                            Style="{StaticResource ActionButton}"
+                            Background="{StaticResource AccentBrush}"
+                            Command="{Binding DownloadQrCommand}"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="Imprimir"
+                            Style="{StaticResource ActionButton}"
+                            Background="{StaticResource OkBrush}"
+                            Command="{Binding PrintQrCommand}"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="Regenerar QR"
+                            Style="{StaticResource ActionButton}"
+                            Background="{StaticResource SecondaryBrushDark}"
+                            Command="{Binding RegenerateQrCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Style="{StaticResource CardBorder}">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Text="Código QR"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,20"/>
+
+                    <Border BorderBrush="{StaticResource PrimaryBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Background="White">
+
+                        <Image Source="{Binding QrImage}"
+                               Width="400"
+                               Height="300"
+                               Stretch="Uniform"/>
+                    </Border>
+
+                    <TextBlock Text="Escanea este código para validar la habitación."
+                               FontSize="13"
+                               Foreground="#6B7280"
+                               TextAlignment="Center"
+                               Margin="0,18,0,0"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Style="{StaticResource CardBorder}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="14"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="LOGS"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"/>
+
+                        <Button Grid.Column="1"
+                                Content="Actualizar"
+                                Style="{StaticResource ActionButton}"
+                                Background="{StaticResource UpdateBrush}"
+                                Command="{Binding RefreshLogsCommand}"/>
+                    </Grid>
+
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding Logs}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Style="{StaticResource ModernDataGrid}"
+                              ColumnHeaderStyle="{StaticResource CenterHeaderStyle}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Fecha"
+                                                Binding="{Binding ScannedAt, StringFormat=dd/MM/yyyy HH:mm}"
+                                                Width="150"/>
+
+                            <DataGridTextColumn Header="Resultado"
+                                                Binding="{Binding Result}"
+                                                Width="120"/>
+
+                            <DataGridTextColumn Header="Usuario"
+                                                Binding="{Binding NombreCompleto}"
+                                                Width="160"/>
+
+                            <DataGridTextColumn Header="Rol"
+                                                Binding="{Binding ActorRole}"
+                                                Width="100"/>
+
+                            <DataGridTextColumn Header="Mensaje"
+                                                Binding="{Binding Message}"
+                                                Width="*"/>
+
+                            <DataGridTextColumn Header="IP"
+                                                Binding="{Binding Ip}"
+                                                Width="130"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

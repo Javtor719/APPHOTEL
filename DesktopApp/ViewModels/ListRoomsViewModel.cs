@@ -34,7 +34,7 @@ namespace DesktopApp.ViewModels
         public ListRoomsViewModel()
         {
             _ = LoadRoomsAsync();
-            DeleteRoomCommand = new RelayCommand(async _ => await DeleteDataRooms(), _ => SelectedRoom != null);
+            DeleteRoomCommand = new RelayCommand(async room => await DeleteDataRooms(room as Rooms), room => room is Rooms);
         }
         public async Task LoadRoomsAsync()
         {
@@ -60,39 +60,43 @@ namespace DesktopApp.ViewModels
                 MessageBox.Show(e.Message);
             }
         }
-        private async Task DeleteDataRooms()
+        private async Task DeleteDataRooms(Rooms? room)
         {
             try
             {
-                if (SelectedRoom is null)
+                if (room is null)
                 {
                     MessageBox.Show("Selecciona una habitación para eliminar.");
                     return;
                 }
+
                 var ok = MessageBox.Show(
-                    $"¿Eliminar la habitación '{SelectedRoom.numRoom}'?",
+                    $"¿Eliminar la habitación '{room.numRoom}'?",
                     "Confirmar eliminación",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.Yes;
 
                 if (!ok) return;
 
-                await _api.DeleteIdRoom(SelectedRoom!.Id);
+                await _api.DeleteIdRoom(room.Id);
+
                 MessageBox.Show(
                     "Habitación Eliminada\n\n" +
-                    $"Número habitación: {SelectedRoom.numRoom}\n" +
-                    $"Planta: {SelectedRoom.numFloor}",
+                    $"Número habitación: {room.numRoom}\n" +
+                    $"Planta: {room.numFloor}",
                     "Éxito",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
+
                 await LoadRoomsAsync();
+
+                SelectedRoom = null;
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
-
         }
         private void OnPropertyChanged([CallerMemberName] string? n = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));

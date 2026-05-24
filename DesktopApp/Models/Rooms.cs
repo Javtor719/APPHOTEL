@@ -28,5 +28,8 @@ namespace DesktopApp.Models
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Availability availability { get; set; }
+
+        [JsonPropertyName("qrVersion")]
+        public int QrVersion { get; set; }
     }
 }

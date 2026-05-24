@@ -17,7 +17,7 @@ namespace DesktopApp.ViewModels
 {
     public class ListRoomsViewModel : INotifyPropertyChanged
     {
-        private readonly ApiClient _api = new ApiClient();
+        private readonly ApiClient _api =  ApiClient.Instance;
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<Rooms> Rooms { get; set; } = new();
@@ -44,15 +44,35 @@ namespace DesktopApp.ViewModels
 
                 Rooms.Clear();
 
+                string month = DateTime.Today.ToString("yyyy-MM");
+                string todayKey = DateTime.Today.ToString("yyyy-MM-dd");
+
                 foreach (var r in list)
                 {
+                    r.EffectiveAvailability = r.availability.ToString().ToLower();
+
+                    try
+                    {
+                        var calendar = await _api.GetRoomCalendarAsync(r.Id, month);
+
+                        if (calendar.Calendar.TryGetValue(todayKey, out var today))
+                        {
+                            if (today.Status == "blocked")
+                                r.EffectiveAvailability = "block";
+                            else if (today.Status == "booked")
+                                r.EffectiveAvailability = "unavailable";
+                            else
+                                r.EffectiveAvailability = "available";
+                        }
+                    }
+                    catch
+                    {
+                        r.EffectiveAvailability = r.availability.ToString().ToLower();
+                    }
+
                     Rooms.Add(r);
                 }
 
-                foreach (var room in Rooms)
-                {
-                    var reviews = await _api.GetReviewIdRoom(room.Id);
-                }
                 OnPropertyChanged(nameof(Rooms));
             }
             catch (Exception e)

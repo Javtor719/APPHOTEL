@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DesktopApp.Models
 {
-    public class Rooms
+    public class Rooms: INotifyPropertyChanged
     {
         [JsonPropertyName("_id")]
         public string Id { get; set; }
@@ -31,5 +33,21 @@ namespace DesktopApp.Models
 
         [JsonPropertyName("qrVersion")]
         public int QrVersion { get; set; }
+
+        private string _effectiveAvailability;
+        public string EffectiveAvailability
+        {
+            get => _effectiveAvailability;
+            set
+            {
+                _effectiveAvailability = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

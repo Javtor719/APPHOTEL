@@ -130,7 +130,7 @@
                                        
                                         <StackPanel Grid.Column="0" >
                                             <TextBlock Grid.Column="0"
-                                                Text="{Binding roomType}"
+                                                Text="{Binding roomType,Converter={StaticResource EnumDescriptionConverter}}"
                                                 FontSize="18"
                                                 FontWeight="SemiBold"
                                                 TextTrimming="CharacterEllipsis"

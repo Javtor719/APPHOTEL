@@ -15,7 +15,20 @@ namespace DesktopApp.Models
         public string Id { get; set; }
         public int numRoom { get; set; }
         public int numFloor { get; set; }
-        public enum RoomType { Single, Double, Triple, Fourfold }
+        public enum RoomType
+        {
+            [Description("Individual")]
+            Single,
+
+            [Description("Doble")]
+            Double,
+
+            [Description("Triple")]
+            Triple,
+
+            [Description("Cuádruple")]
+            Fourfold
+        }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public RoomType roomType { get; set; }
@@ -24,7 +37,17 @@ namespace DesktopApp.Models
 
         public float pricePerNight { get; set; }
         public int maxOccupancy { get; set; }
-        public enum Availability { Available, Unavailable, Block }
+        public enum Availability
+        {
+            [Description("Disponible")]
+            Available,
+
+            [Description("No disponible")]
+            Unavailable,
+
+            [Description("Bloqueada")]
+            Block
+        }
 
         public List<string> services { get; set; } = new();
 

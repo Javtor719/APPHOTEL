@@ -252,12 +252,29 @@ namespace DesktopApp.Services
             return reviews;
         }
 
+        public async Task<List<BookingAuditLog>> GetHistoryReservation(string id)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"bookingAuditLog/{id}/audit");
+            var response = await _httpClient.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<List<BookingAuditLog>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new JsonStringEnumConverter() }
+            }) ?? new List<BookingAuditLog>();
+        }
+
         public async Task<string> PostReservationAsync(Reservations reserva)
         {
             var json = JsonSerializer.Serialize(reserva);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var request = CreateRequest(HttpMethod.Post, "reservations/add");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("reservations/add", content);
+            var response = await _httpClient.SendAsync(request);
 
             var respuestaJson = await response.Content.ReadAsStringAsync();
 
@@ -305,26 +322,25 @@ namespace DesktopApp.Services
             if (string.IsNullOrEmpty(searchData) || string.IsNullOrEmpty(searchProperty))
                 return null;
 
-            try
+            var payload = new { searchData, searchProperty };
+            var json = JsonSerializer.Serialize(payload);
+
+            var request = CreateRequest(HttpMethod.Post, "users/getOne");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-                var payload = new {searchData,searchProperty};
-                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-
-
-                var response = await _httpClient.PostAsync("users/getOneUserByIdOrDni", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var user = await response.Content.ReadFromJsonAsync<User>();
-                    return user;
-                }
-
+                MessageBox.Show($"Error API: {response.StatusCode}\n{body}");
                 return null;
             }
-            catch
+
+            return JsonSerializer.Deserialize<User>(body, new JsonSerializerOptions
             {
-                return null;
-            }
+                PropertyNameCaseInsensitive = true
+            });
         }
         public async Task<bool> DeleteReservationAsync(string reservationId)
         {
@@ -345,13 +361,198 @@ namespace DesktopApp.Services
                 throw;
             }
         }
+
+        public async Task<byte[]> GetInvoicePdfAsync(string reservationId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"reservations/{reservationId}/invoice");
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error API: {(int)response.StatusCode} {response.ReasonPhrase}\n{error}");
+            }
+
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+
+            if (contentType != "application/pdf")
+            {
+                var text = await response.Content.ReadAsStringAsync();
+                throw new Exception($"La API no devolvió un PDF. Content-Type: {contentType}\n{text}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task<InvoiceData> GetInvoiceDataAsync(string reservationId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"reservations/{reservationId}/invoice-data");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Error API: {(int)response.StatusCode}\n{json}");
+
+            return JsonSerializer.Deserialize<InvoiceData>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
+        public async Task<byte[]> PostInvoicePdfAsync(string reservationId, InvoiceData invoiceData)
+        {
+            var json = JsonSerializer.Serialize(invoiceData, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var request = CreateRequest(HttpMethod.Post, $"reservations/{reservationId}/invoice");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error API: {(int)response.StatusCode}\n{error}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task SendInvoiceEmailAsync(string reservationId, string email, InvoiceData invoiceData = null)
+        {
+            var payload = new
+            {
+                email,
+                hotel = invoiceData?.Hotel,
+                client = invoiceData?.Client
+            };
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var request = CreateRequest(HttpMethod.Post, $"reservations/{reservationId}/invoice-email");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
+        public async Task<DashboardStats> GetDashboardStatsAsync()
+        {
+            var request = CreateRequest(HttpMethod.Get, "reservations/dashboardStats");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<DashboardStats>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        public async Task<byte[]> GetRoomQrAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/qr");
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task RegenerateRoomQrAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Post, $"rooms/{roomId}/qr/regenerate");
+            var response = await _httpClient.SendAsync(request);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
+        public async Task<List<RoomQrScanLog>> GetRoomQrLogsAsync(string roomId)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/qr/logs");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<List<RoomQrScanLog>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new List<RoomQrScanLog>();
+        }
+
+        public async Task<RoomCalendarResponse> GetRoomCalendarAsync(string roomId, string month)
+        {
+            var request = CreateRequest(HttpMethod.Get, $"rooms/{roomId}/calendar?month={month}");
+            var response = await _httpClient.SendAsync(request);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(json);
+
+            return JsonSerializer.Deserialize<RoomCalendarResponse>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
+        public async Task CreateRoomBlockAsync(string roomId, DateTime startDate, DateTime endDate, string reason)
+        {
+            var payload = new
+            {
+                startDate = startDate.ToString("yyyy-MM-dd"),
+                endDate = endDate.ToString("yyyy-MM-dd"),
+                reason
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+
+            var request = CreateRequest(HttpMethod.Post, $"rooms/{roomId}/blocks");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
+        public async Task DeleteRoomBlockAsync(string roomId, string blockId)
+        {
+            var request = CreateRequest(HttpMethod.Delete, $"rooms/{roomId}/blocks/{blockId}");
+            var response = await _httpClient.SendAsync(request);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(body);
+        }
+
         public void Logout()
         {
             _token = null;
         }
-
-
-
     }
 
 }

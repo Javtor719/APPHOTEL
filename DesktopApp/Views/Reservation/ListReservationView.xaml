@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             Background="#F8FAFC"
+             Background="{StaticResource BackgroundBrush}"
              d:DesignHeight="400" d:DesignWidth="600">
 
     <Grid Margin="30">
@@ -52,7 +52,7 @@
                             VerticalAlignment="Center">
 
                     <StackPanel>
-                        <CheckBox Content="Ocultar terminadas"
+                        <CheckBox Content="Ocultar Finalizadas"
                           Margin="0,0,20,0"
                           VerticalAlignment="Center"
                           IsChecked="{Binding OcultarTerminadas, Mode=TwoWay}"/>
@@ -86,11 +86,16 @@
 
             <DataGrid x:Name="dgReservation"
                       Style="{StaticResource ModernDataGrid}"
+                      ColumnHeaderStyle="{StaticResource CenterHeaderStyle}"
                       ItemsSource="{Binding Reservas}"
                       SelectedItem="{Binding ReservaSeleccionada, Mode=TwoWay}"
-                      AutoGenerateColumns="False">
+                      AutoGenerateColumns="False"
+                      ColumnWidth="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header=" Nº Reserva" Binding="{Binding ReservationNumber}" Width="*" />
                     <DataGridTextColumn Header="Usuario(DNI)" Binding="{Binding UserDNI}" Width="*" />
                     <DataGridTextColumn Header="Usuario(Nombre)" Binding="{Binding UserNombre}" Width="*" />
                     <DataGridTextColumn Header="Habitaciones" Binding="{Binding RoomNumbers}" Width="*" />
@@ -98,13 +103,48 @@
                     <DataGridTextColumn Header="Entrada" Binding="{Binding CheckIn, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Salida" Binding="{Binding CheckOut, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="Estado" Binding="{Binding Status}" Width="*" />
-                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice}" Width="*"/>
-
+                    <DataGridTextColumn Header="Precio Total" Binding="{Binding TotalPrice, StringFormat={}{0:F2} €}" Width="*"/>
+                    <DataGridTextColumn Header="Nº Factura" Binding="{Binding InvoiceNumber}" Width="*" />
+                    <DataGridTemplateColumn Header="Historial" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                                        BorderThickness="0"
+                                         Click="History_Click"
+                                        CommandParameter="{Binding}">
+                                    <Path Fill="{StaticResource UpdateBrush}"
+                                        Width="30"
+                                        Height="30"
+                                        Stretch="Uniform"
+                                        Data="{StaticResource IcoHistory}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="PDF" Width="40">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                                        BorderThickness="0"
+                                        Click="PDF_Click"
+                                        CommandParameter="{Binding}"
+                                        IsEnabled="{Binding CanInvoice}"
+                                        Opacity="{Binding InvoiceOpacity}">
+                                                <Path Fill="{StaticResource CancelBrush}"
+                                        Width="70"
+                                        Height="30"
+                                        Stretch="Uniform"
+                                        Data="{StaticResource IcoPdf}"/>    
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
                 </DataGrid.Columns>
 
             </DataGrid>
 
-        </Border>
-
+        </Border>              
     </Grid>
+    
 </UserControl>

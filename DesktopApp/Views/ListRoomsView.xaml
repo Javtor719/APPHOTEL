@@ -6,8 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Border Style="{StaticResource CardStyle}"
-        HorizontalAlignment="Center"
+        <Border Style="{StaticResource CardBorder}"
         Padding="0"
         Margin="0">
             <Grid>
@@ -102,19 +101,19 @@
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding availability}" Value="available">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="available">
                                                             <Setter Property="Background" Value="Green"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding availability}" Value="unavailable">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="unavailable">
                                                             <Setter Property="Background" Value="Red"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding availability}" Value="block">
+                                                            <DataTrigger Binding="{Binding EffectiveAvailability}" Value="block">
                                                             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock Text="{Binding availability}"
+                                                <TextBlock Text="{Binding EffectiveAvailability}"
                                                 Foreground="White"
                                                 FontWeight="SemiBold"/>
                                         </Border>
@@ -131,7 +130,7 @@
                                        
                                         <StackPanel Grid.Column="0" >
                                             <TextBlock Grid.Column="0"
-                                                Text="{Binding roomType}"
+                                                Text="{Binding roomType,Converter={StaticResource EnumDescriptionConverter}}"
                                                 FontSize="18"
                                                 FontWeight="SemiBold"
                                                 TextTrimming="CharacterEllipsis"
@@ -143,7 +142,7 @@
                                                        MaxHeight="48"
                                                        TextTrimming="CharacterEllipsis"
                                                        Padding="10 0 0 0"/>
-                                            <Border CornerRadius="20" Width="100" Background="{StaticResource SecondaryBrush}" Margin="10">
+                                            <Border CornerRadius="20" Width="100" Background="{StaticResource PrimaryBrush}" Margin="10">
                                                 <Button Grid.Column="1"
                                                     Background="Transparent"
                                                     BorderThickness="0"
@@ -186,6 +185,24 @@
                                                     <Path Fill="{StaticResource CancelBrush}"
                                                           Width="30" Height="30" Stretch="Uniform"
                                                           Data="{StaticResource IcoDelete}"/>
+                                                </Button>
+                                                <Separator Width="10" Background="Transparent"></Separator>
+                                                <Button Style="{StaticResource IconButtonStyle}"
+                                                    Click="QR_Click"
+                                                    CommandParameter="{Binding}">
+                                                    <Path Fill="{StaticResource SecondaryBrush}"
+                                                          Width="30" Height="30" Stretch="Uniform"
+                                                          Data="{StaticResource IcoQr}"/>
+                                                </Button>
+                                                <Separator Width="10" Background="Transparent"></Separator>
+                                                <Button Style="{StaticResource IconButtonStyle}"
+                                                    Click="Calendar_Click"
+                                                    CommandParameter="{Binding}">
+                                                    <Path Fill="{StaticResource PrimaryBrush}"
+                                                          Width="30"
+                                                          Height="30"
+                                                          Stretch="Uniform"
+                                                          Data="{StaticResource IcoReservations}"/> 
                                                 </Button>
                                             </StackPanel>
                                         </StackPanel>

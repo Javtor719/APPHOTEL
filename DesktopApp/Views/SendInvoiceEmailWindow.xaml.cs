@@ -1,4 +1,5 @@
-﻿using DesktopApp.ViewModels;
+﻿using DesktopApp.Models;
+using DesktopApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +12,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace DesktopApp.Views
 {
-    /// <summary>
-    /// Lógica de interacción para DashboardView.xaml
-    /// </summary>
-    public partial class DashboardView : UserControl
+    public partial class SendInvoiceEmailWindow : Window
     {
-        public DashboardView()
+        public SendInvoiceEmailWindow(Reservations reservation, InvoiceData customInvoiceData)
         {
             InitializeComponent();
-            DataContext = new DashboardViewModel();
+            DataContext = new SendInvoiceEmailViewModel(reservation, customInvoiceData);
         }
     }
 }

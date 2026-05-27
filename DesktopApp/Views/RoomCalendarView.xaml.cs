@@ -10,19 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DesktopApp.Models;
+using DesktopApp.ViewModels;
 
-namespace DesktopApp.Views.Reservation
+namespace DesktopApp.Views
 {
-    /// <summary>
-    /// Lógica de interacción para DashboardView.xaml
-    /// </summary>
-    public partial class DashboardView : UserControl
+    public partial class RoomCalendarView : Window
     {
-        public DashboardView()
+        public RoomCalendarView(Rooms selectedRoom, IEnumerable<Rooms> rooms)
         {
             InitializeComponent();
+            DataContext = new RoomCalendarViewModel(selectedRoom, rooms);
         }
     }
 }

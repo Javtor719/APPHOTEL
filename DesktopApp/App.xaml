@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="/Resources/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <conv:ApiImageToUrlConverter x:Key="ApiImageConverter"/>
+            <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

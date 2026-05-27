@@ -21,6 +21,7 @@ namespace DesktopApp.ViewModels
             _apiClient = new ApiClient();
 
             LimpiarCommand = new RelayCommand(_ => LimpiarFiltro());
+            LimpiarLogCommand = new RelayCommand(_ => LimpiarFiltroLog());
             NuevaReservaCommand = new RelayCommand(_ => NuevaReserva());
             EliminarReservaCommand = new RelayCommand(_ => EliminarReserva());
             CancelarReservaCommand = new RelayCommand(async _ => await CancelarReservaAsync());
@@ -29,7 +30,25 @@ namespace DesktopApp.ViewModels
         }
 
         public ObservableCollection<Reservations> Reservas { get; } = new();
+
         private ObservableCollection<Reservations> _todas;
+        public ObservableCollection<BookingAuditLog> AuditLog { get; } = new();
+
+        private ObservableCollection<BookingAuditLog> _todasAuditLog;        
+
+        private BookingAuditLog _reservaAuditLog;
+        public BookingAuditLog ReservaAuditLog
+        {
+            get => _reservaAuditLog;
+            set { _reservaAuditLog = value; OnPropertyChanged(); }
+        }
+
+        private Reservations _selectedReservation;
+        public Reservations SelectedReservation
+        {
+            get => _selectedReservation;
+            set { _selectedReservation = value; OnPropertyChanged(); }
+        }
 
         private Reservations _reservaSeleccionada;
         public Reservations ReservaSeleccionada
@@ -79,9 +98,59 @@ namespace DesktopApp.ViewModels
             }
         }
 
+        private bool _mostrarConfirmadas = false;
+        public bool MostrarConfirmadas
+        {
+            get => _mostrarConfirmadas;
+            set
+            {
+                _mostrarConfirmadas = value;
+                OnPropertyChanged();
+                AplicarFiltroAuditLog();
+            }
+        }
+
+        private bool _mostrarCanceladas = false;
+        public bool MostrarCanceladas
+        {
+            get => _mostrarCanceladas;
+            set
+            {
+                _mostrarCanceladas = value;
+                OnPropertyChanged();
+                AplicarFiltroAuditLog();
+            }
+        }
+
+        private bool _mostrarCheckIn = false;
+        public bool MostrarCheckIn
+        {
+            get => _mostrarCheckIn;
+            set
+            {
+                _mostrarCheckIn = value;
+                OnPropertyChanged();
+                AplicarFiltroAuditLog();
+            }
+        }
+
+        private bool _mostrarCheckOut = false;
+        public bool MostrarCheckOut
+        {
+            get => _mostrarCheckOut;
+            set
+            {
+                _mostrarCheckOut = value;
+                OnPropertyChanged();
+                AplicarFiltroAuditLog();
+            }
+        }
+
         public ICommand NuevaReservaCommand { get; }
         public ICommand CancelarReservaCommand { get; }
         public ICommand LimpiarCommand { get; }
+
+        public ICommand LimpiarLogCommand { get; }
         public ICommand EliminarReservaCommand { get; }
 
         public async Task CargarReservasAsync()
@@ -116,6 +185,75 @@ namespace DesktopApp.ViewModels
             }
         }
 
+        public async Task LoadHistory(string reservationId)
+        {
+            try
+            {
+                var historial = await _apiClient.GetHistoryReservation(reservationId);
+
+                AuditLog.Clear();
+                
+                foreach (var item in historial)
+                {
+                    var user = await _apiClient.GetUserByIdOrDniAsync(item.ActorId, "id");
+
+                    if (user != null)
+                    {
+                        item.UserDNI = user.DNI;
+                        item.UserNombre = user.NombreCompleto;
+                    }
+                    else
+                    {
+                        item.UserDNI = item.ActorId;
+                        item.UserNombre = item.ActorType;
+                    }
+                        
+
+                    AuditLog.Add(item);
+                    _todasAuditLog = new ObservableCollection<BookingAuditLog>(historial);
+                    AplicarFiltroAuditLog();
+                }
+                    
+            }
+            catch (System.Exception e)
+            {
+                MessageBox.Show(e.Message, "Error");
+            }
+        }
+        private void AplicarFiltroAuditLog()
+        {
+            if (_todasAuditLog == null) return;
+
+            var filtradasLog = _todasAuditLog.AsEnumerable();
+
+            if (!MostrarConfirmadas &&
+                !MostrarCanceladas &&
+                !MostrarCheckIn &&
+                !MostrarCheckOut)
+            {
+                AuditLog.Clear();
+
+                foreach (var item in _todasAuditLog)
+                    AuditLog.Add(item);
+
+                return;
+            }
+
+            filtradasLog = filtradasLog.Where(r =>
+                (MostrarConfirmadas && r.Action.Equals("confirmada", StringComparison.OrdinalIgnoreCase)) ||
+
+                (MostrarCanceladas && r.Action.Equals("cancelada", StringComparison.OrdinalIgnoreCase)) ||
+
+                (MostrarCheckIn && r.Action.Equals("checkIn", StringComparison.OrdinalIgnoreCase)) ||
+
+                (MostrarCheckOut && r.Action.Equals("checkOut", StringComparison.OrdinalIgnoreCase))
+            );
+
+            AuditLog.Clear();
+
+            foreach (var r in filtradasLog)
+                AuditLog.Add(r);
+        }
         private void AplicarFiltro()
         {
             if (_todas == null) return;
@@ -135,7 +273,10 @@ namespace DesktopApp.ViewModels
                     (!string.IsNullOrEmpty(r.UserNombre) && r.UserNombre.ToLower().Contains(busqueda)) ||
 
                     // Buscar por DNI
-                    (!string.IsNullOrEmpty(r.UserDNI) && r.UserDNI.ToLower().Contains(busqueda))
+                    (!string.IsNullOrEmpty(r.UserDNI) && r.UserDNI.ToLower().Contains(busqueda)) ||
+
+                    // Buscar por Nº de Reserva
+                    (!string.IsNullOrEmpty(r.ReservationNumber) && r.ReservationNumber.ToLower().Contains(busqueda))
                 );
             }
 
@@ -150,7 +291,7 @@ namespace DesktopApp.ViewModels
             if (OcultarTerminadas)
             {
                 filtradas = filtradas.Where(r =>
-                    !string.Equals(r.Status, "terminada", StringComparison.OrdinalIgnoreCase)
+                    !string.Equals(r.Status, "checkOut", StringComparison.OrdinalIgnoreCase)
                 );
             }
 
@@ -168,9 +309,26 @@ namespace DesktopApp.ViewModels
         private void LimpiarFiltro()
         {
             TextoBusqueda = "";
+
             OcultarCanceladas = true;
+
             OcultarTerminadas = true;
+            
             AplicarFiltro();
+        }
+
+        private void LimpiarFiltroLog()
+        {
+
+            MostrarConfirmadas = false;
+
+            MostrarCanceladas = false;
+
+            MostrarCheckIn = false;
+
+            MostrarCheckOut = false;
+
+            AplicarFiltroAuditLog();
         }
 
         private void NuevaReserva()
@@ -193,7 +351,7 @@ namespace DesktopApp.ViewModels
 
             try
             {
-                MessageBoxResult messageBoxResult = MessageBox.Show("¿Seguro que quieres cancelar la reserva?", "Cancelar reserva", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+                MessageBoxResult messageBoxResult = MessageBox.Show($"¿Seguro que quieres cancelar la reserva Nº: {ReservaSeleccionada.ReservationNumber}?", "Cancelar reserva", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     bool exito = await _apiClient.CancelReservationAsync(ReservaSeleccionada.Id);
@@ -201,12 +359,12 @@ namespace DesktopApp.ViewModels
                     if (exito)
                     {
                         ReservaSeleccionada.Status = "cancelada";
-                        MessageBox.Show($"Reserva ID: {ReservaSeleccionada.Id} cancelada correctamente.");
+                        MessageBox.Show($"Reserva Nº: {ReservaSeleccionada.ReservationNumber} cancelada correctamente.");
                         AplicarFiltro();
                     }
                     else
                     {
-                        MessageBox.Show("No se pudo cancelar la reserva.");
+                        MessageBox.Show($"No se pudo cancelar la reserva Nº: {ReservaSeleccionada.ReservationNumber}.");
                     }
                 }
             }
@@ -214,6 +372,18 @@ namespace DesktopApp.ViewModels
             {
                 MessageBox.Show("Error al cancelar reserva: " + ex.Message);
             }
+        }
+
+        public bool CanShowInvoice(Reservations reservation)
+        {
+            if (reservation == null)
+                return false;
+
+            var estado = reservation.Status?.Trim().ToLower();
+
+            return estado == "checkin" ||
+                   estado == "checkout" ||
+                   estado == "facturada";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

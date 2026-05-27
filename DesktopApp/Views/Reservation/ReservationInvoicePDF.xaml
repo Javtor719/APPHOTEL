@@ -1,0 +1,51 @@
+﻿<Window x:Class="DesktopApp.Views.Reservation.ReservationInvoicePDF"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp.Views.Reservation"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Background="{StaticResource BackgroundBrush2}"
+        Title="Factura" Height="750" Width="1000"
+        Icon="/Resources/images/icoproyecto.ico">
+    <DockPanel>
+
+        <Border DockPanel.Dock="Top"
+                Background="{StaticResource BackgroundBrush2}"
+                Padding="12"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,0,0,1">
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                <Button Content="Descargar PDF"
+                        Style="{StaticResource ActionButton}"
+                        Background="{StaticResource AccentBrush}"
+                        Width="140"
+                        Height="36"
+                        Margin="0,0,10,0"
+                        Command="{Binding DownloadCommand}"/>
+
+                <Button Content="Enviar al correo"                        
+                        Style="{StaticResource ActionButton}"
+                        Width="150"
+                        Height="36"
+                        Margin="0,0,10,0"
+                        Command="{Binding SendEmailCommand}"/>
+
+                <Button Content="Modificar encabezado"                        
+                        Style="{StaticResource ActionButton}"                        
+                        Background="{StaticResource SecondaryBrush}"
+                        Width="210"
+                        Height="36"
+                        Command="{Binding ConfigHeaderCommand}"/>
+
+            </StackPanel>
+        </Border>
+
+        <wv2:WebView2 x:Name="PdfBrowser"
+              Margin="10"/>
+
+    </DockPanel>
+</Window>

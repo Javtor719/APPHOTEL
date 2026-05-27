@@ -65,7 +65,7 @@ namespace DesktopApp.ViewModels
                 foreach (var reservation in reservations)
                 {
 
-                    if (reservation.Status?.ToLower() != "confirmada")
+                    if (reservation.Status?.Trim().ToLower() == "cancelada")
                     {
                         canceladas.Add(reservation);
                     }
@@ -143,7 +143,7 @@ namespace DesktopApp.ViewModels
             if (SelectedReservation == null) return;
 
             var result = MessageBox.Show(
-                $"¿Deseas eliminar la reserva {SelectedReservation.Id} definitivamente?",
+                $"¿Deseas eliminar la reserva Nº: {SelectedReservation.ReservationNumber} definitivamente?",
                 "Confirmar eliminación",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning
@@ -169,7 +169,7 @@ namespace DesktopApp.ViewModels
 
                     //Limpiar la selección para evitar errores
                     SelectedReservation = null; 
-                    MessageBox.Show("Reserva eliminada correctamente.");
+                    MessageBox.Show($"Reserva Nº: {reservaABorrar.ReservationNumber} eliminada correctamente.");
                 }
             }
             catch (Exception ex)

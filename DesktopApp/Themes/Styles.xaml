@@ -40,7 +40,7 @@
     </Style>
     <!-- Estilo iconos dentro del sidebar  -->
     <Style x:Key="SidebarItemStyle" TargetType="Button">
-        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="Margin" Value="0,10,0,0"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -358,6 +358,7 @@
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="BorderBrush" Value="#E5E7EB"/>
     </Style>
+
     <Style TargetType="DataGridRow">
         <Setter Property="Background" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -377,8 +378,33 @@
             </Trigger>
 
         </Style.Triggers>
-        
-        
+
+
     </Style>
-    
+
+
+    <Style TargetType="DataGridCell">
+        <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#DBEAFE"/>
+                <Setter Property="Foreground" Value="#111827"/>
+            </Trigger>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#F3F4F6"/>
+            </Trigger>
+
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="CenterHeaderStyle" TargetType="DataGridColumnHeader">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
 </ResourceDictionary>
